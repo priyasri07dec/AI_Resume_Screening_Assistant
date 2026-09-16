@@ -1,0 +1,16 @@
+ipykernel
+streamlit
+langchain
+langchain-community
+langchain-core
+langchain-google-genai
+langchain-text-splitters
+langchain-huggingface
+pypdf
+faiss-cpu
+sentence-transformers
+torch
+torchvision
+python-dotenv
+pydantic
+pandas
