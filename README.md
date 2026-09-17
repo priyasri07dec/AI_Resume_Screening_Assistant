@@ -261,4 +261,111 @@ When multiple resumes are uploaded, the application generates a comparison table
 
 This allows multiple candidate evaluations to be reviewed together.
 
+## Testing
+
+During development, the individual components of the pipeline were tested separately.
+
+The testing covered:
+
+* Gemini connection
+* PDF loading
+* Text splitting
+* Embedding generation
+* FAISS vector database
+* Retriever
+* RAG pipeline
+* Structured output parser
+* Reusable resume screening pipeline
+* Multiple resume evaluations
+
+## File Description
+### app.py
+
+Contains the Streamlit user interface.
+
+Responsibilities include:
+
+* Job Description input
+* PDF resume upload
+* Resume evaluation
+* Displaying structured results
+* Candidate comparison
+
+### resume_screening.py
+
+Contains the main Resume Screening and RAG pipeline.
+
+Responsibilities include:
+
+* Loading PDF resumes
+* Splitting documents
+* Creating embeddings
+* Creating FAISS vector stores
+* Creating retrievers
+* Creating the Gemini LLM
+* Creating the prompt
+* Parsing structured output
+* Evaluating resumes
+
+### requirements.txt
+
+Contains the Python packages required to run the application.
+
+### .gitignore
+
+Prevents sensitive and unnecessary files from being uploaded to GitHub.
+
+## Learning Outcomes
+
+This project demonstrates practical implementation of:
+
+* Large Language Models
+* Retrieval-Augmented Generation
+* LangChain
+* Document loaders
+* Text chunking
+* Embeddings
+* Vector databases
+* Semantic search
+* Retrievers
+* Prompt engineering
+* Structured LLM output
+* Pydantic
+* Google Gemini
+* Streamlit
+* AI application development
+
+## Project Summary
+
+The AI Resume Screening Assistant combines LangChain, Retrieval-Augmented Generation, FAISS, Hugging Face embeddings and Google Gemini to analyze resumes against Job Descriptions.
+
+The system retrieves relevant resume information before sending it to the LLM, helping ground the evaluation in the candidate's resume content.
+
+The Streamlit interface allows users to upload multiple resumes, evaluate candidates and review structured screening results through an interactive application.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
