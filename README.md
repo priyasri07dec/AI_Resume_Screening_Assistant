@@ -91,7 +91,7 @@ The main objectives of this project are:
 - Pydantic
 - Pydantic Output Parser
 
-## Frontend / Deployment
+## Deployment
 
 - Streamlit
 
@@ -104,46 +104,161 @@ The main objectives of this project are:
 - Python virtual environment / Conda
 - Python-dotenv
 
----
+## RAG Pipeline
 
-# 🏗️ System Architecture
+The Resume Screening Assistant uses Retrieval-Augmented Generation.
 
-The application follows the following architecture:
+The pipeline consists of the following stages:
 
-```text
-                    Job Description
-                          │
-                          ▼
-                  ┌───────────────┐
-                  │ Prompt Template│
-                  └───────┬───────┘
-                          │
-                          │
-PDF Resume ──► PDF Loader
-                  │
-                  ▼
-            Text Splitter
-                  │
-                  ▼
-        Hugging Face Embeddings
-                  │
-                  ▼
-             FAISS Vector DB
-                  │
-                  ▼
-              Retriever
-                  │
-                  ▼
-       Relevant Resume Context
-                  │
-                  ▼
-           Google Gemini
-                  │
-                  ▼
-        Pydantic Output Parser
-                  │
-                  ▼
-       Structured Evaluation
-                  │
-                  ▼
-           Streamlit Interface
+### 1. Resume Upload
+
+The user uploads one or more resumes in PDF format through the Streamlit application.
+
+### 2. PDF Document Loading
+
+The application uses LangChain's PDF loader to extract text from the uploaded resume.
+
+The extracted document is converted into LangChain document objects.
+
+### 3. Text Splitting
+
+The extracted resume text is divided into smaller chunks using:
+
+`RecursiveCharacterTextSplitter`
+
+Chunking helps the retrieval system work with smaller and more relevant pieces of resume information.
+
+### 4. Embedding Generation
+
+The application uses the following Hugging Face model:
+
+`sentence-transformers/all-MiniLM-L6-v2`
+
+The model converts text into numerical vectors representing the semantic meaning of the resume content.
+
+The embedding model runs locally and does not require a separate embedding API key.
+
+### 5. FAISS Vector Database
+
+The generated embeddings are stored in a FAISS vector database.
+
+FAISS enables efficient similarity-based retrieval of relevant resume information.
+
+### 6. Retriever
+
+A LangChain retriever searches the FAISS vector store using the Job Description.
+
+The retriever identifies resume chunks that are semantically relevant to the requirements of the Job Description.
+
+### 7. Resume Context
+
+The retrieved resume chunks are combined into a context that is provided to the LLM.
+
+The model is instructed to use only the retrieved resume evidence when evaluating the candidate.
+
+### 8. Prompt Template
+
+A LangChain prompt template provides the Job Description, retrieved resume context and structured-output instructions to the LLM.
+
+The prompt instructs the model to:
+
+* Use only resume evidence
+* Avoid inventing skills or experience
+* Identify matching skills
+* Identify missing or non-demonstrated skills
+* Generate a candidate summary
+* Identify strengths and weaknesses
+* Provide a hiring recommendation
+* Provide justification
+* Generate a match score between 0 and 100
+
+### 9. Google Gemini
+
+Google Gemini is used as the LLM for analyzing the resume context against the Job Description.
+
+Current model used during development:
+
+`gemini-3.6-flash`
+
+The application accesses Gemini through LangChain.
+
+### 10. Structured Output
+
+The Gemini response is parsed using:
+
+`PydanticOutputParser`
+
+The structured output contains:
+
+* Match Score
+* Matching Skills
+* Missing Skills
+* Candidate Summary
+* Strengths
+* Weaknesses
+* Hiring Recommendation
+* Justification
+
+## Resume Evaluation Output
+
+For every uploaded resume, the application generates:
+
+#### Match Score
+
+A score between:
+
+`0 - 100`
+
+representing the overall alignment between the resume evidence and the Job Description.
+
+#### Matching Skills
+
+Skills from the Job Description that are explicitly supported by the resume.
+
+#### Missing / Not Demonstrated Skills
+
+Required skills that are not explicitly demonstrated in the resume.
+
+#### Candidate Summary
+
+A concise summary of the candidate's relevant professional and technical background.
+
+#### Strengths
+
+Key candidate strengths relevant to the Job Description.
+
+#### Weaknesses
+
+Relevant skill or experience gaps identified from the comparison between the resume and Job Description.
+
+#### Hiring Recommendation
+
+The application generates an evidence-based recommendation based on the resume and Job Description.
+
+#### Justification
+
+The application provides an explanation supporting the generated match score and recommendation.
+
+## Streamlit Application
+
+The Streamlit application provides an interactive interface where the user can:
+
+* Enter a Job Description.
+* Upload one or more PDF resumes.
+* Click Evaluate Resumes.
+* View the evaluation of each candidate.
+* Compare multiple candidates in a comparison table.
+
+## Candidate Comparison
+
+When multiple resumes are uploaded, the application generates a comparison table containing:
+
+* Candidate
+* Match Score
+* Matching Skills
+* Missing Skills
+* Recommendation
+
+This allows multiple candidate evaluations to be reviewed together.
+
+        
